@@ -1,0 +1,11 @@
+{
+  "model": "models/WeVisDoc-4B",
+  "image_dir": "demos/inputs",
+  "output_dir": "outputs/local_predictions",
+  "overwrite": false,
+  "device_map": "auto",
+  "dtype": "bfloat16",
+  "max_tokens": 8192,
+  "prompt": null,
+  "system_prompt": null
+}

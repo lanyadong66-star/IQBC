@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f3f7fb">
+  <title>SR Studio · 文档图像处理</title>
+  <style>
+    :root{color-scheme:light;--paper:#f3f7fb;--panel:#fff;--ink:#203345;--muted:#708598;--line:#dfe8f0;--accent:#3a7ca8;--accent-hover:#2d668f;--soft:#e8f2fa;--soft-ink:#3c6e91}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 "Segoe UI","Microsoft YaHei",sans-serif}button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed}button,input,select{accent-color:var(--accent)}
+    .shell{max-width:1440px;margin:auto;padding:16px 36px 32px}.topbar{min-height:54px;display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{display:flex;align-items:center;gap:11px;font-weight:700}.brand-icon{width:34px;height:34px;flex:none;border-radius:8px;background:var(--accent);display:grid;place-items:center;color:#fff}.brand-icon svg{width:19px}.badge{font-size:12px;color:var(--soft-ink);background:var(--soft);padding:6px 11px;border-radius:6px;display:flex;gap:7px;align-items:center}.dot{height:7px;width:7px;border-radius:50%;background:#73a8ce;flex:none}.intro{padding:22px 0}.intro h1{font-size:28px;line-height:1.35;margin:0}
+    .workspace{display:grid;grid-template-columns:300px minmax(0,1fr);gap:20px;align-items:start}.card{background:var(--panel);border:1px solid var(--line);border-radius:8px}.settings{padding:18px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:16px}.section-head h2{font-size:15px;margin:0}.step{font-size:10px;color:#8598a8;white-space:nowrap}
+    .upload{border:1px dashed #bad1e3;border-radius:8px;background:#f8fbfe;min-height:124px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:16px;cursor:pointer;transition:background .2s,border-color .2s}.upload:hover,.upload.drag{border-color:var(--accent);background:var(--soft)}.upload svg{width:27px;height:27px;color:var(--accent);margin-bottom:10px}.upload strong{font-size:13px}.upload span{font-size:11px;color:var(--muted);margin-top:4px}.file-info{display:none;align-items:center;gap:10px;margin-top:10px;padding:10px;background:#f0f6fb;border-radius:6px;font-size:12px}.file-info.show{display:flex}.file-icon{height:30px;width:30px;flex:none;border-radius:6px;background:#e2eff9;color:var(--accent);display:grid;place-items:center}.file-meta{min-width:0;flex:1}.file-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}.file-size{color:var(--muted);font-size:11px}.remove{border:0;background:transparent;color:#8599aa;cursor:pointer;font-size:18px}
+    .divider{height:1px;background:var(--line);margin:14px 0}.option-title{font-size:12px;font-weight:700;margin:0 0 8px}.option{position:relative;display:flex;align-items:center;gap:10px;min-height:54px;padding:10px 0;border-bottom:1px solid #edf2f6;cursor:pointer}.toggle{position:relative;width:36px;height:21px;background:#dbe5ed;border-radius:15px;flex:none;transition:background .2s}.toggle:after{content:"";position:absolute;width:15px;height:15px;border-radius:50%;background:#fff;left:3px;top:3px;box-shadow:0 1px 3px #20334522;transition:transform .2s}.option input{position:absolute;opacity:0;width:36px;height:24px;left:0;top:50%;transform:translateY(-50%);margin:0;z-index:1;cursor:pointer}.option input:checked+.toggle{background:var(--accent)}.option input:checked+.toggle:after{transform:translateX(15px)}.option input:disabled+.toggle{opacity:.5}.option input:focus-visible+.toggle{outline:2px solid var(--accent);outline-offset:3px}.option-copy{min-width:0;flex:1;display:flex;flex-direction:column}.option-copy strong{font-size:13px;font-weight:650}.option-copy small{font-size:11px;color:var(--muted);margin-top:1px}.tag{font-size:9px;background:var(--soft);color:var(--soft-ink);padding:4px 6px;border-radius:4px;flex:none}
+    .text-strength{margin-top:10px}.text-strength label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);gap:8px}.text-strength input{width:100%;margin:8px 0 0}.advanced{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;min-width:0}.field{min-width:0}.field label{display:block;font-size:11px;color:var(--muted);margin:0 0 5px}.field select{width:100%;height:38px;border:1px solid var(--line);border-radius:6px;background:white;color:var(--ink);padding:0 8px;font-size:12px}.field select:disabled{background:#f5f8fb;color:#8b9cab;cursor:not-allowed}.ocr-fields{border:0;border-top:1px solid var(--line);padding:12px 0 0;margin:16px 0 0}.ocr-fields legend{font-size:11px;color:var(--muted);padding:0 6px 0 0}.ocr-fields .field:last-child{grid-column:1/-1}
+    .run{width:100%;border:0;border-radius:8px;background:var(--accent);height:45px;color:#fff;font-weight:650;margin-top:16px;transition:background .2s}.run:hover:not(:disabled){background:var(--accent-hover)}.run:disabled{opacity:.5}.hint{font-size:11px;color:var(--muted);text-align:center;margin:9px 0 0;overflow-wrap:anywhere}.ocr-model{font-size:10px;text-align:left;margin-top:10px}.status{color:var(--muted);font-size:12px;margin-top:12px;overflow-wrap:anywhere}.status:empty{display:none}.status.error,.ocr-status.error{color:#b14f43}.status.busy,.ocr-status.busy{color:var(--accent)}
+    .result-stack{min-width:0;display:flex;flex-direction:column;gap:14px}.previews{display:grid;grid-template-columns:1fr 1fr;gap:16px;min-width:0}.preview-card{overflow:hidden;min-width:0}.preview-head{min-height:56px;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid var(--line)}.preview-label{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:650;white-space:nowrap}.preview-index{font:12px Georgia,serif;color:#96a8b7}.preview-size{font-size:10px;color:var(--muted);background:#f0f5fa;padding:5px 8px;border-radius:4px;overflow-wrap:anywhere;text-align:right}
+    .canvas{height:520px;background-color:#f8fbfd;background-image:radial-gradient(#dce8f1 .8px,transparent .8px);background-size:17px 17px;display:flex;align-items:center;justify-content:center;padding:18px;position:relative}.canvas img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;border-radius:3px;box-shadow:0 6px 22px #24476314}.placeholder{text-align:center;color:#93a6b6}.placeholder svg{width:38px;height:38px;opacity:.6;margin-bottom:9px}.placeholder p{margin:0;font-size:12px}.result-placeholder{color:#7394af}.preview-foot{min-height:58px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:10px 14px;gap:8px;flex-wrap:wrap;font-size:10px;color:var(--muted)}.stages{display:flex;gap:5px;flex-wrap:wrap;min-width:0;flex:1}.stage{padding:4px 7px;border-radius:4px;background:var(--soft);color:var(--soft-ink)}.download{display:none;color:var(--accent);font-size:11px;font-weight:650;border:0;background:none;white-space:nowrap;padding:3px 0}.download.show{display:inline}
+    .ocr-output{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff;min-width:0}.ocr-toolbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;padding:10px 14px;border-bottom:1px solid var(--line)}.ocr-tabs{display:flex;gap:4px;min-width:0}.ocr-tabs button{border:0;border-radius:4px;padding:7px 12px;font-size:12px;background:transparent;color:#6c8193}.ocr-tabs button[aria-selected=true]{background:var(--soft);color:#305f82}.ocr-download{font-size:12px;color:var(--accent);text-decoration:none;font-weight:600;white-space:nowrap}.ocr-download[hidden]{display:none}
+    .ocr-viewport{height:360px;min-height:240px}.ocr-viewport iframe{display:block;width:100%;height:100%;border:0;background:#fff}.ocr-source{margin:0;height:100%;overflow:auto;padding:18px;white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.8 Consolas,"Microsoft YaHei",monospace;background:#f8fbfe}.ocr-source[hidden],.ocr-viewport iframe[hidden]{display:none}.ocr-empty{height:100%;display:grid;place-items:center;color:#859bab;font-size:13px;padding:24px;text-align:center}.ocr-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:9px 14px;min-height:38px;border-top:1px solid var(--line)}.ocr-meta{font-size:11px;color:var(--muted);overflow-wrap:anywhere}.ocr-status{font-size:12px;color:var(--muted);overflow-wrap:anywhere}.ocr-status:empty{display:none}
+    .footnote{margin-top:18px;color:#879bab;font-size:10px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}button:focus-visible,select:focus-visible,.upload:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+    @media(max-width:1000px){.workspace{grid-template-columns:280px minmax(0,1fr);gap:16px}.canvas{height:440px}.shell{padding-left:24px;padding-right:24px}.preview-head{padding-left:12px;padding-right:12px}}
+    @media(max-width:760px){.shell{padding:14px 15px 24px}.workspace{grid-template-columns:1fr}.intro{padding:20px 0}.intro h1{font-size:25px}.canvas{height:340px}.settings{padding:16px}.ocr-viewport{height:320px}.footnote{flex-direction:column}.result-stack{gap:12px}}
+    @media(max-width:540px){.previews{grid-template-columns:1fr;gap:12px}.canvas{height:300px}.badge{font-size:11px;padding:6px 8px}.topbar{gap:10px}.ocr-toolbar{padding:10px}.ocr-tabs button{padding:7px 9px}.preview-head{min-height:50px}.preview-foot{min-height:46px}}
+  </style>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%233a7ca8'/%3E%3Cpath d='M10 8h12v16H10zM13 12h6M13 16h6M13 20h4' fill='none' stroke='white'/%3E%3C/svg%3E">
+</head>
+<body>
+<main class="shell">
+  <header class="topbar">
+    <div class="brand"><span class="brand-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5z"/><path d="M8 8h8M8 12h8M8 16h4"/></svg></span>SR Studio</div>
+    <div class="badge"><span class="dot"></span><span id="ready">本机推理已就绪</span></div>
+  </header>
+  <section class="intro"><div><h1>文档图像处理</h1></div></section>
+  <section class="workspace">
+    <aside class="card settings">
+      <div class="section-head"><h2>处理设置</h2><span class="step">01 — CONFIGURE</span></div>
+      <label class="upload" id="dropzone" for="file-input">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5"/><path d="M5 14v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5"/></svg>
+        <strong>拖放图片到这里</strong><span>或者点击选择 · PNG / JPG / BMP / WebP</span><span>单张不超过 26 MB、400 万像素</span>
+      </label>
+      <input id="file-input" type="file" accept="image/png,image/jpeg,image/bmp,image/webp" hidden>
+      <div class="file-info" id="file-info"><div class="file-icon">▧</div><div class="file-meta"><div class="file-name" id="file-name"></div><div class="file-size" id="file-size"></div></div><button class="remove" id="remove-file" aria-label="移除图片">×</button></div>
+      <div class="divider"></div>
+      <p class="option-title">选择处理步骤</p>
+      <label class="option"><input type="checkbox" id="super-resolution" checked><span class="toggle"></span><span class="option-copy"><strong>超分辨率</strong><small>将图像放大 4 倍并修复细节</small></span><span class="tag">SR</span></label>
+      <label class="option"><input type="checkbox" id="dewarping"><span class="toggle"></span><span class="option-copy"><strong>透视矫正</strong><small>校正拍摄倾斜、页面弯曲</small></span><span class="tag">可选</span></label>
+      <label class="option"><input type="checkbox" id="shadow-removal"><span class="toggle"></span><span class="option-copy"><strong>去阴影</strong><small>模型去除光照阴影，保留彩色文档</small></span><span class="tag">可选</span></label>
+      <label class="option"><input type="checkbox" id="background-fading"><span class="toggle"></span><span class="option-copy"><strong>背景淡化</strong><small>保护文字，淡化原图背景颜色；非二值化</small></span><span class="tag">可选</span></label>
+      <div class="text-strength"><label for="background-strength">背景淡化强度<output id="background-strength-value" for="background-strength">50%</output></label><input id="background-strength" type="range" min="0" max="100" step="5" value="50" disabled></div>
+      <p class="hint" id="background-note" hidden>去背景会将最终底色设为白色；测试淡化效果请关闭去背景。</p>
+      <label class="option"><input type="checkbox" id="text-enhancement"><span class="toggle"></span><span class="option-copy"><strong>文字增强</strong><small>加深文字，保留背景</small></span><span class="tag">可选</span></label>
+      <div class="text-strength"><label for="text-strength">文字加深强度<output id="text-strength-value" for="text-strength">50%</output></label><input id="text-strength" type="range" min="0" max="100" step="5" value="50" disabled></div>
+      <label class="option"><input type="checkbox" id="background-removal"><span class="toggle"></span><span class="option-copy"><strong>去背景</strong><small>提取文字前景，生成清晰底色</small></span><span class="tag">可选</span></label>
+      <label class="option"><input type="checkbox" id="enable-ocr"><span class="toggle"></span><span class="option-copy"><strong>OCR 提取</strong><small>识别最终图像，输出 Markdown</small></span><span class="tag">MD</span></label>
+      <div class="advanced"><div class="field"><label for="device">推理设备</label><select id="device"><option value="cuda">NVIDIA GPU</option><option value="cpu">CPU</option></select></div><div class="field"><label for="tile-size">分块尺寸</label><select id="tile-size"><option value="128">128 · 低显存</option><option value="256" selected>256 · 推荐</option><option value="384">384</option><option value="512">512 · 快速</option></select></div></div>
+      <fieldset class="advanced ocr-fields" id="ocr-options" disabled>
+        <legend>识别参数</legend>
+        <div class="field"><label for="ocr-device">OCR 推理设备</label><select id="ocr-device"><option value="cuda">NVIDIA GPU</option><option value="cpu">CPU</option></select></div>
+        <div class="field"><label for="ocr-max-tokens">输出 Token 上限</label><select id="ocr-max-tokens"><option value="4096">4096</option><option value="8192" selected>8192</option><option value="16384">16384</option><option value="32768">32768</option></select></div>
+        <div class="field"><label for="ocr-max-pixels">OCR 视觉分辨率</label><select id="ocr-max-pixels"><option value="1048576">约 100 万像素</option><option value="2097152" selected>约 200 万像素</option><option value="4194304">约 400 万像素</option></select></div>
+      </fieldset>
+      <p class="hint ocr-model" id="ocr-ready">检查 Yad_OCR 本地模型…</p>
+      <button class="run" id="run" disabled>选择图片开始处理　→</button>
+      <p class="hint">图像可保存，识别结果可下载为 .md</p>
+      <div class="status" id="status" role="status" aria-live="polite"></div>
+    </aside>
+    <div class="result-stack">
+    <div class="previews">
+      <section class="card preview-card"><div class="preview-head"><div class="preview-label"><span class="preview-index">A</span>原始图像</div><span class="preview-size" id="input-size">等待上传</span></div><div class="canvas" id="input-canvas"><div class="placeholder"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.1"><rect x="6" y="7" width="28" height="26" rx="3"/><circle cx="15" cy="16" r="3"/><path d="m8 29 9-8 5 4 4-3 7 7"/></svg><p>上传文档图片以查看预览</p></div></div><div class="preview-foot"><span id="input-foot">本机预览</span><span>INPUT</span></div></section>
+      <section class="card preview-card"><div class="preview-head"><div class="preview-label"><span class="preview-index">B</span>处理结果</div><span class="preview-size" id="output-size">—</span></div><div class="canvas" id="output-canvas"><div class="placeholder result-placeholder"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.1"><rect x="7" y="6" width="26" height="28" rx="3"/><path d="M13 14h14M13 19h14M13 24h9"/></svg><p>结果将在这里呈现</p></div></div><div class="preview-foot"><div class="stages" id="stages"><span>等待处理</span></div><button class="download" id="save" style="border:0;background:none;cursor:pointer;white-space:nowrap">保存结果 ↓</button></div></section>
+    </div>
+      <section class="ocr-output" id="document-output" aria-label="Markdown 识别结果">
+        <div class="ocr-toolbar"><div class="ocr-tabs" role="tablist" aria-label="OCR 输出视图"><button id="ocr-preview-tab" role="tab" aria-selected="true" aria-controls="ocr-preview">排版预览</button><button id="ocr-source-tab" role="tab" aria-selected="false" aria-controls="ocr-raw" tabindex="-1">Markdown 源文</button></div><a id="download-markdown" class="ocr-download" hidden>下载 .md ↓</a></div>
+        <div class="ocr-viewport"><div class="ocr-empty" id="ocr-empty">开启 OCR 后，识别结果将在这里呈现</div><iframe id="ocr-preview" title="OCR Markdown 排版预览" sandbox="" referrerpolicy="no-referrer" hidden></iframe><pre class="ocr-source" id="ocr-raw" role="tabpanel" aria-labelledby="ocr-source-tab" hidden></pre></div>
+        <div class="ocr-foot"><div class="ocr-status" id="ocr-status" role="status" aria-live="polite"></div><div class="ocr-meta" id="ocr-meta">等待识别</div></div>
+      </section>
+    </div>
+  </section>
+  <footer class="footnote"><span>SR Studio · 本机演示 · 图片不会发送到外部服务器</span><span>执行顺序：超分 → 矫正 → 去阴影 → 背景淡化 → 文字增强 → 去背景 → OCR（可选）</span></footer>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+let selectedFile = null, inputUrl = null, resultId = null, busy = false, validImage = false;
+let markdownResult = null, markdownUrl = null, ocrView = 'preview';
+const inputCanvas = $('input-canvas'), outputCanvas = $('output-canvas');
+const status = $('status'), runButton = $('run');
+
+function setStatus(message, kind = '') {
+  status.textContent = message;
+  status.className = 'status' + (kind ? ' ' + kind : '');
+}
+function humanSize(bytes) {
+  return bytes < 1024 * 1024 ? (bytes / 1024).toFixed(0) + ' KB' : (bytes / 1024 / 1024).toFixed(1) + ' MB';
+}
+function setOcrStatus(message, kind = '') {
+  $('ocr-status').textContent = message;
+  $('ocr-status').className = 'ocr-status' + (kind ? ' ' + kind : '');
+}
+function clearOcr() {
+  markdownResult = null;
+  if (markdownUrl) URL.revokeObjectURL(markdownUrl);
+  markdownUrl = null;
+  $('ocr-empty').hidden = false;
+  $('ocr-empty').style.display = '';
+  $('ocr-preview').hidden = true;
+  $('ocr-preview').removeAttribute('srcdoc');
+  $('ocr-raw').hidden = true;
+  $('ocr-raw').textContent = '';
+  $('download-markdown').hidden = true;
+  $('download-markdown').removeAttribute('href');
+  $('ocr-meta').textContent = '等待识别';
+  setOcrStatus('');
+}
+function setOcrView(view) {
+  ocrView = view;
+  for (const name of ['preview', 'source']) {
+    const active = name === view;
+    $('ocr-' + name + '-tab').setAttribute('aria-selected', String(active));
+    $('ocr-' + name + '-tab').tabIndex = active ? 0 : -1;
+  }
+  $('ocr-preview').hidden = !markdownResult || view !== 'preview';
+  $('ocr-raw').hidden = !markdownResult || view !== 'source';
+}
+function showOcr(data) {
+  markdownResult = data.markdown;
+  $('ocr-empty').hidden = true;
+  $('ocr-empty').style.display = 'none';
+  $('ocr-preview').srcdoc = data.markdown_html;
+  $('ocr-raw').textContent = data.markdown;
+  if (markdownUrl) URL.revokeObjectURL(markdownUrl);
+  markdownUrl = URL.createObjectURL(new Blob([data.markdown], {type: 'text/markdown;charset=utf-8'}));
+  $('download-markdown').href = markdownUrl;
+  $('download-markdown').download = data.markdown_filename;
+  $('download-markdown').hidden = false;
+  $('ocr-meta').textContent = `${data.markdown_filename} · ${new Blob([data.markdown]).size.toLocaleString()} 字节 · UTF-8`;
+  setOcrView(ocrView);
+  setOcrStatus('提取完成。');
+}
+function syncActions() {
+  runButton.disabled = busy || !validImage;
+  $('ocr-options').disabled = busy || !$('enable-ocr').checked;
+}
+function setBusy(value) {
+  busy = value;
+  document.querySelectorAll('input, select, #remove-file').forEach(element => element.disabled = value);
+  $('save').disabled = value;
+  syncTextControls();
+  syncActions();
+}
+function clearResult() {
+  resultId = null;
+  outputCanvas.innerHTML = '<div class="placeholder result-placeholder"><p>结果将在这里呈现</p></div>';
+  $('output-size').textContent = '—';
+  $('stages').innerHTML = '<span>等待处理</span>';
+  $('save').classList.remove('show');
+  clearOcr();
+  syncActions();
+}
+function selectFile(file) {
+  if (!file || busy) return;
+  if (!['image/png', 'image/jpeg', 'image/bmp', 'image/webp', 'image/x-ms-bmp'].includes(file.type)) {
+    setStatus('请选择 PNG、JPG、BMP 或 WebP 图片。', 'error');
+    return;
+  }
+  if (file.size > 26 * 1024 * 1024) {
+    setStatus('图片不能超过 26 MB。', 'error');
+    return;
+  }
+  selectedFile = file;
+  validImage = false;
+  runButton.disabled = true;
+  if (inputUrl) URL.revokeObjectURL(inputUrl);
+  inputUrl = URL.createObjectURL(file);
+  const image = document.createElement('img');
+  image.alt = '待处理图像预览';
+  image.onload = () => {
+    if (inputCanvas.firstElementChild !== image) return;
+    $('input-size').textContent = `${image.naturalWidth} × ${image.naturalHeight}`;
+    if (image.naturalWidth * image.naturalHeight > 4e6 || Math.min(image.naturalWidth, image.naturalHeight) < 2) {
+      setStatus('图片需至少 2 × 2 像素，且不超过 400 万像素。', 'error');
+      return;
+    }
+    validImage = true;
+    syncActions();
+    runButton.textContent = '开始处理　→';
+    setStatus('图片已就绪。');
+  };
+  image.onerror = () => { validImage = false; syncActions(); setStatus('无法预览此图片，请换用 PNG 或 JPG。', 'error'); };
+  image.src = inputUrl;
+  inputCanvas.replaceChildren(image);
+  $('file-info').classList.add('show');
+  $('file-name').textContent = file.name;
+  $('file-size').textContent = humanSize(file.size);
+  $('input-foot').textContent = '本机预览 · ' + file.type;
+  clearResult();
+}
+function syncTextControls() {
+  for (const [toggle, strength] of [['text-enhancement', 'text-strength'], ['background-fading', 'background-strength']]) {
+    $(toggle).disabled = busy;
+    $(strength).disabled = busy || !$(toggle).checked;
+    $(strength + '-value').textContent = $(strength).value + '%';
+  }
+  $('background-note').hidden = !($('background-fading').checked && $('background-removal').checked);
+}
+syncTextControls();
+syncActions();
+for (const id of ['super-resolution', 'dewarping', 'shadow-removal', 'background-removal', 'text-enhancement', 'background-fading', 'device', 'tile-size', 'text-strength', 'background-strength', 'enable-ocr', 'ocr-device', 'ocr-max-tokens', 'ocr-max-pixels']) {
+  $(id).addEventListener(id.endsWith('-strength') ? 'input' : 'change', () => {
+    syncTextControls();
+    syncActions();
+    if (resultId && !busy) {
+      clearResult();
+      setStatus('选项已更新，请重新运行处理。');
+    }
+  });
+}
+$('file-input').addEventListener('change', event => selectFile(event.target.files[0]));
+$('remove-file').addEventListener('click', () => {
+  if (busy) return;
+  selectedFile = null;
+  validImage = false;
+  if (inputUrl) URL.revokeObjectURL(inputUrl);
+  inputUrl = null;
+  $('file-input').value = '';
+  $('file-info').classList.remove('show');
+  $('input-size').textContent = '等待上传';
+  inputCanvas.innerHTML = '<div class="placeholder"><p>上传文档图片以查看预览</p></div>';
+  clearResult();
+  runButton.disabled = true;
+  runButton.textContent = '选择图片开始处理　→';
+  setStatus('');
+});
+const dropzone = $('dropzone');
+for (const name of ['dragenter', 'dragover']) dropzone.addEventListener(name, event => {
+  event.preventDefault();
+  if (!busy) dropzone.classList.add('drag');
+});
+for (const name of ['dragleave', 'drop']) dropzone.addEventListener(name, event => {
+  event.preventDefault();
+  dropzone.classList.remove('drag');
+});
+dropzone.addEventListener('drop', event => selectFile(event.dataTransfer.files[0]));
+function base64File(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = () => reject(new Error('读取图片失败。'));
+    reader.readAsDataURL(file);
+  });
+}
+runButton.addEventListener('click', async () => {
+  if (!validImage || busy) return;
+  setBusy(true);
+  runButton.textContent = '正在处理…';
+  clearResult();
+  const useOcr = $('enable-ocr').checked;
+  const hasImageSteps = ['super-resolution', 'dewarping', 'shadow-removal', 'background-fading', 'text-enhancement', 'background-removal'].some(id => $(id).checked);
+  setStatus(useOcr && !hasImageSteps ? '正在识别原图，请稍候…' : '正在执行所选步骤，请稍候…', 'busy');
+  if (useOcr) setOcrStatus(hasImageSteps ? '等待图像处理完成后识别…' : '正在识别原图…', 'busy');
+  try {
+    const payload = {
+      filename: selectedFile.name, image: await base64File(selectedFile),
+      super_resolution: $('super-resolution').checked, dewarping: $('dewarping').checked,
+      shadow_removal: $('shadow-removal').checked,
+      background_removal: $('background-removal').checked,
+      text_enhancement: $('text-enhancement').checked, text_strength: Number($('text-strength').value) / 100,
+      background_fading: $('background-fading').checked, background_strength: Number($('background-strength').value) / 100,
+      device: $('device').value, tile_size: Number($('tile-size').value), ocr: useOcr
+    };
+    if (useOcr) Object.assign(payload, {
+      ocr_device: $('ocr-device').value,
+      ocr_max_tokens: Number($('ocr-max-tokens').value),
+      ocr_max_pixels: Number($('ocr-max-pixels').value)
+    });
+    const response = await fetch('/api/infer', {
+      method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || '处理失败。');
+    const resultImage = document.createElement('img');
+    resultImage.src = 'data:image/png;base64,' + data.image;
+    resultImage.alt = hasImageSteps ? '处理后的文档图像' : '原始文档图像';
+    outputCanvas.replaceChildren(resultImage);
+    $('output-size').textContent = `${data.width} × ${data.height}`;
+    $('stages').replaceChildren(...data.stages.map(stage => {
+      const item = document.createElement('span');
+      item.className = 'stage'; item.textContent = stage;
+      return item;
+    }));
+    resultId = data.result_id;
+    $('save').classList.add('show');
+    if (useOcr && typeof data.markdown === 'string') showOcr(data);
+    if (data.ocr_error) {
+      setOcrStatus(data.ocr_error, 'error');
+      setStatus('图像处理已完成，OCR 未完成；图像结果仍可保存。', 'error');
+    } else {
+      setStatus(`处理完成 · ${data.seconds} 秒`);
+    }
+  } catch (error) {
+    setStatus(error.message, 'error');
+    if (useOcr) setOcrStatus(error.message, 'error');
+  } finally {
+    setBusy(false);
+    runButton.textContent = '再处理一次　→';
+  }
+});
+for (const name of ['preview', 'source']) {
+  const tab = $('ocr-' + name + '-tab');
+  tab.addEventListener('click', () => setOcrView(name));
+  tab.addEventListener('keydown', event => {
+    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+    event.preventDefault();
+    const target = event.key === 'Home' ? 'preview' : event.key === 'End' ? 'source' : name === 'preview' ? 'source' : 'preview';
+    setOcrView(target); $('ocr-' + target + '-tab').focus();
+  });
+}
+$('save').addEventListener('click', async () => {
+  if (!resultId) return;
+  $('save').disabled = true;
+  try {
+    const response = await fetch('/api/save', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({result_id: resultId})
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || '保存失败。');
+    setStatus('已保存到：' + data.path);
+  } catch (error) {
+    setStatus(error.message, 'error');
+  } finally {
+    $('save').disabled = false;
+  }
+});
+fetch('/api/status').then(response => response.json()).then(data => {
+  $('ready').textContent = data.ready ? '本机模型已就绪' : '缺少权重文件';
+  $('ocr-ready').textContent = data.ocr && data.ocr.ready ? 'Yad_OCR 本机模型已就绪' : 'OCR 环境待配置';
+  if (data.ocr && !data.ocr.ready) {
+    const missing = [...data.ocr.missing_files, ...data.ocr.missing_dependencies];
+    setOcrStatus('OCR 未就绪：' + (missing.join('、') || '缺少 Yad_OCR 本地模型或依赖') + '。请检查 requirements-ocr.txt。', 'error');
+  }
+  if (!data.ready) setStatus('权重文件不完整，请确认 weights 中的三个推理权重都在。', 'error');
+}).catch(() => $('ready').textContent = '本机服务未连接');
+</script>
+</body>
+</html>

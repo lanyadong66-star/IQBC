@@ -1,0 +1,7 @@
+# Optional OCR integration. Install in the same environment as SR/demo.
+-r requirements.txt
+torch>=2.4.0
+transformers>=4.57.0,<6
+accelerate>=0.34.0
+Pillow>=10.0.0
+Markdown>=3.6,<4
