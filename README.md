@@ -105,7 +105,7 @@ Shard names must match the mappings in the index file. The application loads mod
 
 Batch inference is configured through the **`INFERENCE_X4_CONFIG`** dictionary at the end of [sr/x4/infer_document_x4.py](sr/x4/infer_document_x4.py).
 ### 4.2 Download pre-trained weights
-Download the pretrained and view-specific model weights from the [v1.0 release](https://github.com/lanyadong66-star/PUF-Net/releases/tag/v1.0) and place the downloaded `.pth,pkl` files in the `weight'.
+Download the pretrained model weights from the [v1.0 release](https://github.com/lanyadong66-star/PUF-Net/releases/tag/v1.0) and place the downloaded `.pth` and `.pkl` files in the `weights/` directory.
 ### 4.3 Running Inference
 
 After completing the configuration, run the following command from the project root directory:
