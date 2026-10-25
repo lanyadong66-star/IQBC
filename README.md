@@ -1,4 +1,3 @@
-[README.md](https://github.com/user-attachments/files/33922433/README.md)
 # Model Overview
 
 A model for document image restoration and structured text extraction. The model has been trained on a large-scale dataset of real Chinese archival documents (non-synthetic images sourced from archives) and achieves strong performance on image processing and OCR text extraction tasks involving real archival documents. The project provides directory-based batch inference, a Python API, and a local Web Demo, with support for super-resolution, perspective correction, shadow removal, background fading, text enhancement, background removal, and OCR text recognition.
